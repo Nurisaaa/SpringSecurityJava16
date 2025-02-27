@@ -7,6 +7,7 @@ import peaksoft.springsecurityjava16.dto.AuthResponse;
 import peaksoft.springsecurityjava16.dto.LoginRequest;
 import peaksoft.springsecurityjava16.dto.UserRegisterRequest;
 import peaksoft.springsecurityjava16.entities.User;
+import peaksoft.springsecurityjava16.exceptions.NotFoundException;
 import peaksoft.springsecurityjava16.repositories.UserRepo;
 
 @Service
@@ -23,7 +24,7 @@ public class UserService {
 
     public AuthResponse signIn(LoginRequest request) {
         User user = userRepo.findUserByEmail(request.getEmail()).orElseThrow(
-                () -> new RuntimeException(request.getEmail())
+                () -> new NotFoundException("User not found with email: " + request.getEmail())
         );
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid password");
@@ -35,6 +36,9 @@ public class UserService {
         User user = new User();
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setName(registerRequest.getName());
+        user.setPhoneNumber(registerRequest.getPhoneNumber());
+        user.setAddress(registerRequest.getAddress());
         user.setRole("USER");
         userRepo.save(user);
         return new AuthResponse(user.getId(), user.getEmail(), user.getRole(), jwtService.generateToken(user));

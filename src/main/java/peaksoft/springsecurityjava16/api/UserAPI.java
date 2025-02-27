@@ -1,8 +1,5 @@
 package peaksoft.springsecurityjava16.api;
 
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.springsecurityjava16.dto.AuthResponse;
 import peaksoft.springsecurityjava16.dto.LoginRequest;
@@ -23,13 +20,9 @@ public class UserAPI {
     public AuthResponse signIn(@RequestBody LoginRequest request){
         return userService.signIn(request);
     }
+
     @PostMapping("/register")
     public AuthResponse signUp(@RequestBody UserRegisterRequest registerRequest){
         return userService.signUp(registerRequest);
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<String> responseEntity(){
-        return ResponseEntity.ok().body("Success");
     }
 }
